@@ -22,7 +22,7 @@
     <platform name="android">    
         <config-file target="config.xml" parent="/*">
             <feature name="MyPlugin">
-                <param name="android-package" value="cn.jackyzhong.myplugin" /> 
+                <param name="android-package" value="cn.jackyzhong.myplugin.MyPlugin" /> 
             </feature>
         </config-file>
         <js-module src="www/MyPlugin.js" name="MyPlugin">
