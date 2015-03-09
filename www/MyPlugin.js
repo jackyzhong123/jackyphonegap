@@ -5,7 +5,7 @@
      */
     function MyPlugin() { };
 
-    MyPlugin.prototype.sayHello = function () {
+    MyPlugin.prototype.sayHello = function (arg) {
         exec(function (result) {
             // result handler
             alert(result);
@@ -16,7 +16,7 @@
           },
           "MyPlugin",
           "sayHello",
-          []
+          [arg]
         );
     };
 
