@@ -23,8 +23,7 @@
 -(void)jumpToURL:(CDVInvokedUrlCommand*)command;
 
 -(void)downloadFileAsync:(CDVInvokedUrlCommand*)command;
-
--(void)computeFolderSize:(CDVInvokedUrlCommand*)command;
+ 
 
 
 @end
