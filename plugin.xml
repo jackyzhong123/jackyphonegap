@@ -17,4 +17,20 @@
         <header-file src="src/ios/MyPlugin.h" />
 	    <source-file src="src/ios/MyPlugin.m" />
     </platform>
+    
+     <!-- ios -->
+    <platform name="android">    
+        <config-file target="config.xml" parent="/*">
+            <feature name="MyPlugin">
+                <param name="android-package" value="cn.jackyzhong.myplugin" /> 
+            </feature>
+        </config-file>
+        <js-module src="www/MyPlugin.js" name="MyPlugin">
+            <clobbers target="myPlugin" />
+        </js-module>
+      	<source-file src="src/android/MyPlugin.java"
+                target-dir="src/cn/jackyzhong/myplugin" /> 
+      	 
+    </platform>
+    
 </plugin>
