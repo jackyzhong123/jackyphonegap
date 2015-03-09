@@ -1,4 +1,4 @@
-cordova.define("de.websector.myplugin.MyPlugin", function (require, exports, module) {
+ 
     var exec = require('cordova/exec');
     /**
      * Constructor
@@ -188,4 +188,4 @@ cordova.define("de.websector.myplugin.MyPlugin", function (require, exports, mod
 
     var myPlugin = new MyPlugin();
     module.exports = myPlugin;
-});
+ 
