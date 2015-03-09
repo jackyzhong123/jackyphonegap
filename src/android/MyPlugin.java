@@ -18,7 +18,7 @@ public class MyPlugin extends CordovaPlugin {
 		try {
 			if (ACTION_ADD_CALENDAR_ENTRY.equals(action)) { 
 		 
-			   callbackContext.success("Jacky");
+			   callbackContext.success("Jacky"+ args.getString(0));
 			   return true;
 			}
 			callbackContext.error("Invalid action");
