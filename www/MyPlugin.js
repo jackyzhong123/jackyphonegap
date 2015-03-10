@@ -1,13 +1,12 @@
  
     var exec = require('cordova/exec');
     /**
-     * Constructor
+     * Constructor1
      */
     function MyPlugin() { };
 
     MyPlugin.prototype.sayHello = function (arg) {
-        exec(function (result) {
-            // result handler
+        exec(function (result) { 
             alert(result);
         },
           function (error) {
@@ -20,13 +19,10 @@
         );
     };
 
-    MyPlugin.prototype.encodeByDES = function (arg1) {
-      //  console.log("encode")
-        var deferred = $.Deferred();
-        //console.log("encode2");
-        exec(function (result, prevalue) {
-            
-            deferred.resolve(result, prevalue);
+    MyPlugin.prototype.encodeByDES = function (arg1) { 
+        var deferred = $.Deferred(); 
+        exec(function (result) { 
+            deferred.resolve(result);
         },
           function (error) {
               // error handler
@@ -46,8 +42,8 @@
 
     MyPlugin.prototype.setValueToLocal = function (key, value) {
         var deferred = $.Deferred();
-        exec(function (key,value) {
-            deferred.resolve(key, value);
+        exec(function (result) {
+            deferred.resolve(result);
         },
         function (error) {
             // error handler
@@ -60,17 +56,36 @@
         return deferred.promise();
     };
 
+    MyPlugin.prototype.checkCacheExisit=function(source,target)
+    {
+        var deferred = $.Deferred();
+        exec(function (result) {
+            deferred.resolve(result);
+        },
+        function (error) {
+            // error handler
+           // alert("Error" + error);
+        },
+         "MyPlugin",
+          "checkCacheExisit",
+          [source, target]
+        );
+        return deferred.promise();
+    }
+
+
+
     MyPlugin.prototype.getValueToLocal = function (key) {
         var deferred = $.Deferred();
-        exec(function (key, value) {
-            deferred.resolve(key, value);
+        exec(function (result) {
+            deferred.resolve(result);
         },
         function (error) {
             // error handler
             alert("Error" + error);
         },
          "MyPlugin",
-          "getValueToLocal",
+         "getValueToLocal",
           [key]
         );
         return deferred.promise();
