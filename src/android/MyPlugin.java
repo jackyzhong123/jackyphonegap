@@ -8,6 +8,10 @@ import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.apache.cordova.App;
 import org.apache.cordova.CallbackContext;
@@ -15,9 +19,11 @@ import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.pengyouqiang.pengyouqiang.InternalActivity;
 import com.pengyouqiang.pengyouqiang.MainActivity;
+import com.pengyouqiang.uti.AsyncDownload;
 import com.pengyouqiang.uti.DESUti;
 
 import android.R.string;
@@ -34,7 +40,7 @@ import android.app.Activity;
 
 public class MyPlugin extends CordovaPlugin {
 	public static final String ACTION_ADD_CALENDAR_ENTRY = "sayHello";
-	public JSONArray _args;
+	 
 
 	@Override
 	public boolean execute(String action, JSONArray args,
@@ -55,8 +61,8 @@ public class MyPlugin extends CordovaPlugin {
 					resultString = "0";
 				}
 				JSONArray jsonStrs = new JSONArray();
-				jsonStrs.put(0, resultString);
-				jsonStrs.put(1, args.getString(0));
+				jsonStrs.put(0,  args.getString(0));
+				jsonStrs.put(1,resultString);
 				callbackContext.success(jsonStrs);
 				return true;
 			case "jumpToMainTab":
@@ -73,8 +79,19 @@ public class MyPlugin extends CordovaPlugin {
 				getValueToLocal(args, callbackContext);
 				return true;
 			case "checkCacheExisit":
-				checkCacheExisit(args, callbackContext);
-
+				SharedPreferences spPreferences = cordova.getActivity().getSharedPreferences(
+						"user", Context.MODE_PRIVATE);
+				 
+				checkCacheExisit(args,spPreferences.getString("PATH_NoCloud", ""), callbackContext);
+				return true;
+			case "JumpToView":
+				JumpToView(args, callbackContext);
+				callbackContext.success();
+				return true;
+			case "jumpToBack":
+				cordova.getActivity().finish();
+				return true;
+				
 			default:
 				break;
 			}
@@ -87,6 +104,39 @@ public class MyPlugin extends CordovaPlugin {
 			return false;
 		}
 	}
+	
+	private void JumpToView(JSONArray args, CallbackContext callbackContext) throws JSONException
+	{
+		 String isInternal = args.getString(0);
+	     String url = args.getString(1);
+	     String page = args.getString(2);
+	     String data =  args.getString(3);
+	     if(isInternal.equals("internal"))
+	     {
+	    	
+				SharedPreferences preferences = cordova.getActivity().getSharedPreferences("user",
+						Context.MODE_PRIVATE);
+				Editor editor = preferences.edit();
+
+				editor.putString("JumpUrl", url);
+				editor.putString("JumpPage",page);
+				editor.putString("JumpData", data);
+				editor.commit();
+				 Intent intent = new Intent(cordova.getActivity(),
+							InternalActivity.class);
+					cordova.getActivity().startActivity(intent) ;
+			 
+			//		cordova.getActivity().finish();
+				
+	     }else {
+			
+		}
+	     
+	     
+	     
+	}
+	
+	
 
 	private void getValueToLocal(JSONArray args, CallbackContext callbackContext)
 			throws Exception {
@@ -100,127 +150,45 @@ public class MyPlugin extends CordovaPlugin {
 		callbackContext.success(JSONgetValueToLocal);
 	}
 
-	private void checkCacheExisit(JSONArray args,
+	private void checkCacheExisit(JSONArray args,String NoCloudPath,
 			CallbackContext callbackContext) throws Exception {
-
-		File file = new File(args.getString(0));
-		if (file.exists()) {
-			callbackContext.success(1);
-		} else {
-			callbackContext.success(0);
-			downloadFileAsync(args);
-		}
-	}
-
-	private void downloadFileAsync(JSONArray args,
-			CallbackContext callbackContext) throws Exception {
-		File file = new File(args.getString(0));
-		_args = args;
-		if (file.exists()) {
-			callbackContext.success(1);
-		} else {
-			callbackContext.success(0);
-			new Thread(new Runnable() {
-				public void run() {
-					try {
-						String sourceUrl = _args.getString(0); // 获取下载地址
-						URL url = new URL(sourceUrl); // 创建下载地址对应的URL对象
-						HttpURLConnection urlConn = (HttpURLConnection) url
-								.openConnection(); // 创建一个连接
-						InputStream is = urlConn.getInputStream(); // 获取输入流对象
-						if (is != null) {
-							String expandName = sourceUrl.substring(
-									sourceUrl.lastIndexOf(".") + 1,
-									sourceUrl.length()).toLowerCase(); // 获取文件的扩展名
-							String fileName = _args.getString(1);
-							File file = new File(fileName); // 在SD卡上创建文件
-
-							FileOutputStream fos = new FileOutputStream(file); // 创建一个文件输出流对象
-							byte buf[] = new byte[128];// 创建一个字节数组
-							// 读取文件到输出流对象中
-							while (true) {
-								int numread = is.read(buf);
-								if (numread <= 0) {
-									break;
-								} else {
-									fos.write(buf, 0, numread);
-								}
-							}
-						}
-						is.close(); // 关闭输入流对象
-						urlConn.disconnect(); // 关闭连接
-
-					} catch (MalformedURLException e) {
-						e.printStackTrace(); // 输出异常信息
-
-					} catch (IOException e) {
-						e.printStackTrace(); // 输出异常信息
-
-					}
-					// Message m = handler.obtainMessage(); // 获取一个Message
-					// handler.sendMessage(m); // 发送消息
-					catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}).start(); // 开启线程
-		}
-	}
-
-	private void downloadFileAsync(JSONArray args) throws Exception {
-		File file = new File(args.getString(0));
-		_args = args;
-		new Thread(new Runnable() {
-			public void run() {
-				try {
-					String sourceUrl = _args.getString(0); // 获取下载地址
-					URL url = new URL(sourceUrl); // 创建下载地址对应的URL对象
-					HttpURLConnection urlConn = (HttpURLConnection) url
-							.openConnection(); // 创建一个连接
-					InputStream is = urlConn.getInputStream(); // 获取输入流对象
-					if (is != null) {
-					 
-						String fileName = _args.getString(1);
-						File file = new File(fileName); // 在SD卡上创建文件
-
-						FileOutputStream fos = new FileOutputStream(file); // 创建一个文件输出流对象
-						byte buf[] = new byte[128];// 创建一个字节数组
-						// 读取文件到输出流对象中
-						while (true) {
-							int numread = is.read(buf);
-							if (numread <= 0) {
-								break;
-							} else {
-								fos.write(buf, 0, numread);
-							}
-						}
-						fos.close();
-					}
-					is.close(); // 关闭输入流对象
-					
-					urlConn.disconnect(); // 关闭连接
-
-				} catch (MalformedURLException e) {
-					e.printStackTrace(); // 输出异常信息
-					
-
-				} catch (IOException e) {
-					e.printStackTrace(); // 输出异常信息
-
-				}
-				// Message m = handler.obtainMessage(); // 获取一个Message
-				// handler.sendMessage(m); // 发送消息
-				catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}finally{
-				 
-				}
+		ArrayList<String>  existArr = new ArrayList<String> (); 
+		ArrayList<String>  nonExistArr = new ArrayList<String> (); 
+		 
+		for(int i=0;i<args.length();i++)
+		{
+			File file = new File(NoCloudPath+"/imagecache/"+ args.getString(i));
+			if(file.exists())
+			{
+				existArr.add(args.getString(i));
+			}else {
+				
+				nonExistArr.add(args.getString(i));
 			}
-		}).start(); // 开启线程
+		}
+		JSONObject result = new JSONObject();
+		JSONArray jsonExist = new JSONArray();  
+		JSONArray jsonNoExist = new JSONArray();
+		Iterator<String> it=existArr.iterator();
+		while(it.hasNext()){
+			jsonExist.put(it.next());			
+		}
+		it=nonExistArr.iterator();
+		while(it.hasNext()){
+			jsonNoExist.put(it.next());			
+		}
+		result.put("exsist", jsonExist);
+		result.put("nonexsist", jsonNoExist);
+		callbackContext.success(result);
+		//downloadFileAsync(nonExistArr);
+		AsyncDownload download=new AsyncDownload();
+		download.execute(nonExistArr,NoCloudPath+"/imagecache/");
+		return;
+	 
+ 
 	}
-
+  
+ 
 	private void setValueToLocal(JSONArray args, CallbackContext callbackContext)
 			throws Exception {
 		SharedPreferences SPsetValueToLocal = cordova.getActivity()
