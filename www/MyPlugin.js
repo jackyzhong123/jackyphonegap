@@ -56,22 +56,6 @@
         return deferred.promise();
     };
 
-    MyPlugin.prototype.checkCacheExisit=function(source,target)
-    {
-        var deferred = $.Deferred();
-        exec(function (result) {
-            deferred.resolve(result);
-        },
-        function (error) {
-            // error handler
-           // alert("Error" + error);
-        },
-         "MyPlugin",
-          "checkCacheExisit",
-          [source, target]
-        );
-        return deferred.promise();
-    }
 
 
 
@@ -93,6 +77,24 @@
     };
 
 
+    MyPlugin.prototype.checkCacheExisit = function (source) {
+        var deferred = $.Deferred();
+        exec(function (result) {
+            deferred.resolve(result);
+        },
+        function (error) {
+            // error handler
+            // alert("Error" + error);
+        },
+         "MyPlugin",
+          "checkCacheExisit",
+         source
+        );
+        return deferred.promise();
+    }
+
+
+
 
     MyPlugin.prototype.jumpToMainTab = function () {
       //  var deferred = $.Deferred();
@@ -110,8 +112,11 @@
       //  return deferred.promise();
     };
 
-    MyPlugin.prototype.jumpToXGCQ = function (arg1,arg2) {
-        //  var deferred = $.Deferred();
+    MyPlugin.prototype.jumpToXGCQ = function (arg1, arg2) {
+        var isInternal = "internal";
+        var url = "xgcq.html";
+        var page = "Home";
+        var data = JSON.stringify({ "id": arg1, "name": arg2 });
         exec(function () {
             // deferred.resolve(result);
         },
@@ -120,8 +125,8 @@
             alert("Error" + error);
         },
          "MyPlugin",
-          "jumpToXGCQ",
-          [arg1, arg2]
+          "JumpToView",
+          [isInternal,url, page, data]
         );
         //  return deferred.promise();
     };
