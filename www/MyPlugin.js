@@ -19,20 +19,44 @@
         );
     };
 
-    MyPlugin.prototype.encodeByDES = function (arg1) { 
-        var deferred = $.Deferred(); 
-        exec(function (result) { 
-            deferred.resolve(result);
+    MyPlugin.prototype.showMenuTabs = function (arg) {
+        exec(function ( ) {
+           // alert(result);
         },
           function (error) {
               // error handler
               alert("Error" + error);
           },
           "MyPlugin",
+          "showMenuTabs",
+          [arg]
+        );
+    };
+    MyPlugin.prototype.injectDetailWebView = function (arg) {
+        exec(function ( ) {
+           // alert(result);
+        },
+          function (error) {
+              // error handler
+              alert("Error" + error);
+          },
+          "MyPlugin",
+          "injectDetailWebView",
+          [arg]
+        );
+    };
+    MyPlugin.prototype.encodeByDES = function (arg1) { 
+        var deferred = $.Deferred(); 
+        exec(function (result) { 
+            deferred.resolve(result);
+        },
+          function (error) { 
+              alert("Error" + error);
+          },
+          "MyPlugin",
           "encodeByDES",
           [arg1]
-        );
-        //console.log("endencode")
+        ); 
         return deferred.promise();
     };
 
@@ -45,8 +69,7 @@
         exec(function (result) {
             deferred.resolve(result);
         },
-        function (error) {
-            // error handler
+        function (error) { 
             alert("Error" + error);
         },
          "MyPlugin",
@@ -112,11 +135,7 @@
       //  return deferred.promise();
     };
 
-    MyPlugin.prototype.jumpToXGCQ = function (arg1, arg2) {
-        var isInternal = "internal";
-        var url = "xgcq.html";
-        var page = "Home";
-        var data = JSON.stringify({ "id": arg1, "name": arg2 });
+    MyPlugin.prototype.jumpToInternalCordova = function (url,data,needResult) {  
         exec(function () {
             // deferred.resolve(result);
         },
@@ -125,13 +144,46 @@
             alert("Error" + error);
         },
          "MyPlugin",
-          "JumpToView",
-          [isInternal,url, page, data]
+          "jumpToInternalCordova",
+          [url, data,needResult]
         );
         //  return deferred.promise();
     };
 
-    MyPlugin.prototype.jumpToBack = function () {
+    MyPlugin.prototype.jumpToInternalCordovaWithDetail = function (url, data, needResult) {
+        exec(function () {            
+        },
+        function (error) {
+            // error handler
+            alert("Error" + error);
+        },
+         "MyPlugin",
+          "jumpToInternalCordovaWithDetail",
+          [url, data,needResult]
+        );
+        //  return deferred.promise();
+    };
+	 
+	 MyPlugin.prototype.clearimagecache = function () {
+          var deferred = $.Deferred();
+        exec(function (result) {
+             deferred.resolve(result);
+        },
+        function (error) {
+            // error handler
+            alert("Error" + error);
+        },
+         "MyPlugin",
+          "clearimagecache",
+          []
+        );
+        return deferred.promise();
+    };
+	
+	
+	
+
+    MyPlugin.prototype.jumpToBack = function (needResult) {
         //  var deferred = $.Deferred();
         exec(function () {
             // deferred.resolve(result);
@@ -142,10 +194,28 @@
         },
          "MyPlugin",
           "jumpToBack",
+          [needResult]
+        );
+        //  return deferred.promise();
+    };
+	
+	MyPlugin.prototype.jumpToBackResult = function () {
+        //  var deferred = $.Deferred();
+        exec(function () {
+            // deferred.resolve(result);
+        },
+        function (error) {
+            // error handler
+            alert("Error" + error);
+        },
+         "MyPlugin",
+          "jumpToBackResult",
           []
         );
         //  return deferred.promise();
     };
+	
+	
 
     MyPlugin.prototype.clearAccount = function () {
         var deferred = $.Deferred();
@@ -162,17 +232,41 @@
         return deferred.promise();
     };
 
-    MyPlugin.prototype.jumpToURL = function (arg, isSys) {
-        exec(function () {
-            // deferred.resolve(result);
-        },
-      function (error) {
-          alert("Error" + error);
-      },
-       "MyPlugin",
-        "jumpToURL",
-        [arg, isSys]
-      );
+    MyPlugin.prototype.jumpToURL = function (arg) {
+        if (arg.indexOf("http://jacky.chinacloudsites.cn")==0 || arg.indexOf("http://www.huodongyou.cn")==0)
+        {
+            $.ajax({
+                url: global.serverUrl + "api/Login/MobielWebLogin",
+                type: "POST",
+                headers: { 'Authorization': 'Bearer ' + localStorage.access_token },
+                success: function (data) {
+                    var url = "http://jacky.chinacloudsites.cn/Account/inMobileLogin?id=" + data + "&returnUrl=" + encodeURIComponent(arg);
+                    exec(function () {
+                        // deferred.resolve(result);
+                    },
+    function (error) {
+        alert("Error" + error);
+    },
+     "MyPlugin",
+      "jumpToURL",
+      [url]
+    );
+                }
+            });
+        }else
+        {
+            exec(function () {
+                // deferred.resolve(result);
+            },
+function (error) {
+    alert("Error" + error);
+},
+ "MyPlugin",
+  "jumpToURL",
+  [arg]
+);
+        }
+      
 
     };
 
